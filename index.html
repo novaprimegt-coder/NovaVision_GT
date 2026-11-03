@@ -37,6 +37,7 @@ h1{font-size:clamp(42px,7vw,78px);line-height:.98;letter-spacing:-3px;margin:18p
 footer{padding:28px 0 46px;color:#6f8aa4;font-size:12px;border-top:1px solid rgba(98,204,255,.09)}.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer-row strong{color:#b9d6e9}
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,4,12,.72);backdrop-filter:blur(9px);z-index:140;display:none;padding:18px;align-items:center;justify-content:center}.modal-backdrop.open{display:flex}.modal{width:min(720px,100%);max-height:min(84vh,780px);overflow:auto;border:1px solid rgba(87,211,255,.25);border-radius:28px;background:linear-gradient(160deg,#071a38,#030d20);box-shadow:0 30px 100px rgba(0,0,0,.56);padding:25px}.modal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.modal-badge{font-size:11px;text-transform:uppercase;letter-spacing:1.6px;font-weight:950;color:#5be1ff}.modal h3{font-size:29px;margin:6px 0 10px;letter-spacing:-.8px}.modal p{color:#a9bfd2;line-height:1.7}.close{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#0a1d3b;border:1px solid var(--line);color:#fff;cursor:pointer;font-size:20px}.detail-box{padding:16px;border-radius:17px;background:rgba(9,27,56,.72);border:1px solid rgba(88,204,255,.12);margin-top:13px}.detail-box strong{display:block;color:#dff9ff;margin-bottom:5px}.detail-box span{display:block;color:#9cb4ca;font-size:13px;line-height:1.6}.modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:19px}
 .chat{position:fixed;right:16px;bottom:16px;z-index:160;width:min(390px,calc(100% - 32px));height:min(610px,calc(100vh - 32px));display:none;flex-direction:column;border-radius:25px;overflow:hidden;border:1px solid rgba(79,208,255,.28);background:#041127;box-shadow:0 28px 90px rgba(0,0,0,.54)}.chat.open{display:flex}.chat-head{display:flex;align-items:center;gap:11px;padding:14px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#0a2750,#07182f)}.chat-head img{width:42px;height:42px;border-radius:13px;object-fit:contain;background:#020a18;padding:4px;border:1px solid var(--line)}.chat-head strong{display:block;font-size:14px}.chat-head small{color:#89a9c2}.chat-close{margin-left:auto;width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:#07162d;color:#fff;font-size:18px;cursor:pointer}.chat-messages{flex:1;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:10px}.msg{max-width:86%;padding:11px 13px;border-radius:15px;font-size:13px;line-height:1.55;white-space:pre-line}.msg.bot{align-self:flex-start;background:#0a2143;border:1px solid rgba(83,209,255,.12);color:#cce6f7;border-bottom-left-radius:5px}.msg.user{align-self:flex-end;background:linear-gradient(135deg,#159be7,#1767dc);color:white;border-bottom-right-radius:5px}.chat-suggestions{display:flex;gap:7px;overflow:auto;padding:0 12px 10px;scrollbar-width:none}.suggest{white-space:nowrap;border:1px solid var(--line);background:#071b36;color:#bdefff;padding:7px 9px;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer}.chat-form{display:grid;grid-template-columns:1fr auto;gap:8px;padding:11px;border-top:1px solid var(--line);background:#031024}.chat-form input{min-width:0;border-radius:13px;border:1px solid rgba(84,205,255,.2);background:#071a34;color:#fff;padding:12px 13px;outline:none}.chat-form input:focus{border-color:#39d7ff}.chat-form button{border:0;border-radius:13px;padding:0 15px;background:linear-gradient(135deg,#56e2ff,#1e8cff);color:#00101d;font-weight:950;cursor:pointer}.chat-fab{position:fixed;right:18px;bottom:18px;z-index:130;border:1px solid rgba(113,223,255,.34);background:linear-gradient(135deg,#0a2a54,#0a64c2);color:#fff;border-radius:999px;padding:12px 16px;box-shadow:0 16px 45px rgba(0,0,0,.34);font-weight:950;cursor:pointer;display:flex;align-items:center;gap:8px}.chat.open+.chat-fab{display:none}
+.typing{display:flex!important;align-items:center;gap:5px;width:max-content;min-width:48px}.typing i{width:6px;height:6px;border-radius:50%;background:#74dcff;opacity:.32;animation:typingDot 1.05s infinite ease-in-out}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}@keyframes typingDot{0%,70%,100%{transform:translateY(0);opacity:.28}35%{transform:translateY(-3px);opacity:1}}.msg.bot{word-break:break-word}.msg.bot strong{color:#effbff}.chat-suggestions:empty{display:none}
 @media(max-width:900px){.dual,.institutional{grid-template-columns:1fr}.hero{min-height:590px}.hero-content{padding:30px}.social-grid{grid-template-columns:1fr 1fr}.navlinks a:not(.keep){display:none}}
 @media(max-width:560px){nav{top:8px}.brand img{width:39px;height:39px}.hero{min-height:620px;border-radius:26px}.hero-bg{width:88%;height:70%;right:-22%;top:2%;opacity:.30}.hero-content{padding:24px 20px 26px}h1{font-size:43px;letter-spacing:-2px}.section{padding:55px 0}.area{border-radius:22px}.service{padding:14px}.social-grid{grid-template-columns:1fr 1fr}.modal{padding:19px;border-radius:22px}.chat{right:8px;bottom:8px;width:calc(100% - 16px);height:calc(100vh - 16px)}}
 /* Protección visual e interacción, manteniendo controles funcionales. */
@@ -122,7 +123,7 @@ html,body,body *{-webkit-tap-highlight-color:transparent}img{-webkit-user-drag:n
 </div>
 
 <div class="chat" id="chat" role="dialog" aria-label="Asistente NovaVision GT">
-  <div class="chat-head"><img data-logo alt=""><div><strong>Asistente NovaVision GT</strong><small>Información oficial de servicios</small></div><button class="chat-close" type="button" aria-label="Cerrar" onclick="closeChat()">×</button></div>
+  <div class="chat-head"><img data-logo alt=""><div><strong>Asistente NovaVision GT</strong><small>Asistencia inteligente sobre nuestros servicios</small></div><button class="chat-close" type="button" aria-label="Cerrar" onclick="closeChat()">×</button></div>
   <div class="chat-messages" id="chatMessages"></div>
   <div class="chat-suggestions" id="chatSuggestions"></div>
   <form class="chat-form" id="chatForm"><input id="chatInput" autocomplete="off" placeholder="Escribe tu pregunta..." aria-label="Pregunta"><button type="submit">Enviar</button></form>
@@ -154,22 +155,243 @@ function openService(id){const s=services[id];activeService=id;document.getEleme
 function closeModal(){document.getElementById('serviceModal').classList.remove('open');document.body.style.overflow=''}
 function backdropClose(e){if(e.target.id==='serviceModal')closeModal()}
 const chat=document.getElementById('chat'),messages=document.getElementById('chatMessages'),suggestions=document.getElementById('chatSuggestions'),input=document.getElementById('chatInput');
-function addMessage(text,type='bot'){const d=document.createElement('div');d.className=`msg ${type}`;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight}
-function setSuggestions(items){suggestions.innerHTML='';items.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='suggest';b.textContent=x.label;b.onclick=()=>askBot(x.text);suggestions.appendChild(b)})}
-function openChat(serviceId){chat.classList.add('open');if(!messages.dataset.started){addMessage('Hola. Soy el asistente informativo de NovaVision GT. Puedo responder sobre nuestros servicios oficiales de Marketing Digital y Desarrollo Web.');messages.dataset.started='1'}if(serviceId&&services[serviceId]){activeService=serviceId;const s=services[serviceId];addMessage(`Has seleccionado “${s.title}”.\n\n${s.description}\n\n${s.scope}`);setSuggestions([{label:'¿Qué incluye?',text:`¿Qué incluye ${s.title}?`},{label:'¿Precios?',text:`¿Cuál es el precio de ${s.title}?`},{label:'Otro servicio',text:'Muéstrame todos los servicios'}])}else setSuggestions([{label:'Desarrollo',text:'¿Qué servicios de desarrollo ofrecen?'},{label:'Marketing Digital',text:'¿Qué servicios de marketing digital ofrecen?'},{label:'Todos los servicios',text:'Muéstrame todos los servicios'}]);setTimeout(()=>input.focus(),80)}
+
+/* Motor conversacional local de NovaVision GT.
+   Mantiene contexto, tolera variaciones de escritura y responde de forma progresiva.
+   No inventa precios, plazos ni condiciones comerciales que no estén definidas oficialmente. */
+const serviceKnowledge={
+  paginas:{
+    aliases:['pagina','paginas','pagina web','paginas web','sitio','sitio web','web','landing','landing page'],
+    ideal:['una empresa que necesita presencia profesional en internet','una marca o proyecto que quiere explicar claramente quién es y qué ofrece','un negocio que necesita un punto oficial al cual dirigir clientes desde redes o publicidad'],
+    possibilities:['presentación de la empresa o marca','secciones de servicios o productos','información institucional y medios de contacto','diseño adaptable a teléfono y computadora','estructura preparada según los objetivos del proyecto'],
+    benefit:'centralizar la presencia digital del proyecto en un espacio propio, ordenado y profesional.',
+    discovery:['qué debe lograr la página','qué información o secciones necesita','si ya existe identidad visual y contenido','qué acciones quieres que realice el visitante']
+  },
+  tiendas:{
+    aliases:['tienda','tiendas','tienda online','tienda en linea','ecommerce','e-commerce','shop','catalogo con compra'],
+    ideal:['negocios que quieren presentar y comercializar productos o servicios en internet','proyectos que necesitan organizar una oferta digital en forma de catálogo o tienda'],
+    possibilities:['catálogo organizado','fichas de productos o servicios','estructura de compra o solicitud según el proyecto','información comercial y canales de atención','experiencia adaptable a dispositivos móviles'],
+    benefit:'convertir la oferta del negocio en una experiencia digital organizada para que el cliente pueda conocerla y avanzar hacia una compra o solicitud.',
+    discovery:['qué venderás','cuántos productos o servicios manejarás','cómo quieres recibir las solicitudes o pagos','qué información necesita cada producto']
+  },
+  biografias:{
+    aliases:['biografia','biografias','bio','link in bio','linkinbio','perfil digital','tarjeta digital'],
+    ideal:['personas, marcas o proyectos que necesitan reunir su información principal y enlaces en un solo lugar','perfiles que quieren dirigir desde redes sociales hacia distintos canales'],
+    possibilities:['presentación breve','enlaces importantes','redes sociales','servicios o información destacada','llamados a la acción según el objetivo'],
+    benefit:'concentrar información y accesos importantes en una presentación simple, clara y fácil de compartir.',
+    discovery:['qué información debe aparecer','qué enlaces quieres destacar','qué identidad visual debe respetarse','cuál es la acción principal que quieres provocar']
+  },
+  chatbot:{
+    aliases:['chatbot','chat bot','bot','asistente','asistente virtual','bot web','bot whatsapp','whatsapp bot','automatizar whatsapp','respuestas automaticas'],
+    ideal:['proyectos que reciben preguntas repetitivas','negocios que quieren orientar usuarios dentro de una web o WhatsApp','marcas que necesitan dar información de forma más rápida y organizada'],
+    possibilities:['base de conocimiento del negocio','respuestas sobre servicios o productos','orientación paso a paso','flujos de preguntas frecuentes','integraciones o automatizaciones cuando el proyecto lo requiera y sean técnicamente viables'],
+    benefit:'facilitar la atención inicial y ayudar al usuario a encontrar respuestas sin depender de una sola respuesta rígida.',
+    discovery:['en qué canal funcionará','qué información debe conocer','qué preguntas recibe el negocio con frecuencia','qué acciones debería poder realizar además de responder']
+  },
+  apps:{
+    aliases:['aplicacion','aplicaciones','app','apps','aplicacion movil','sistema movil'],
+    ideal:['proyectos que necesitan funciones propias que una página convencional no cubre','negocios que quieren convertir un proceso o servicio en una experiencia de aplicación'],
+    possibilities:['interfaces y pantallas adaptadas al proyecto','módulos y funciones específicas','flujos de usuario','gestión de información según la arquitectura necesaria','integraciones cuando formen parte del alcance aprobado'],
+    benefit:'transformar una necesidad concreta en una herramienta digital diseñada alrededor del funcionamiento real del proyecto.',
+    discovery:['qué problema resolverá la aplicación','quiénes la utilizarán','qué funciones son indispensables','qué datos o procesos debe manejar']
+  },
+  playstation:{
+    aliases:['playstation','play station','ps','subir a playstation','publicar en playstation'],
+    ideal:['casos que cumplan la condición oficial definida por NovaVision GT para este servicio'],
+    possibilities:['evaluación del caso dentro de la condición oficial establecida por la empresa'],
+    benefit:'atender este tipo de solicitud únicamente dentro del alcance autorizado por NovaVision GT.',
+    discovery:['confirmar que el proyecto cumple la condición oficial del servicio','revisar el caso concreto antes de afirmar procesos adicionales']
+  },
+  videos:{
+    aliases:['video','videos','video publicitario','videos publicitarios','spot','reel publicitario','anuncio en video'],
+    ideal:['marcas que necesitan presentar un producto, servicio o campaña de forma audiovisual','proyectos que quieren contenido publicitario producido con IA o desarrollado desde cero'],
+    possibilities:['concepto y estructura del contenido','producción con IA o desarrollo desde cero según el caso','composición visual y narrativa publicitaria','adaptación del enfoque al objetivo de comunicación'],
+    benefit:'comunicar una idea, producto o servicio de forma visual y dinámica para captar atención y explicar mejor el mensaje.',
+    discovery:['qué se va a promocionar','a qué público se dirige','qué mensaje principal debe quedar claro','dónde se utilizará el video']
+  },
+  edicion:{
+    aliases:['edicion','editar','edicion de video','edicion de contenido','editar contenido'],
+    ideal:['clientes que ya cuentan con material y necesitan mejorarlo, organizarlo o adaptarlo para su comunicación digital'],
+    possibilities:['organización y ajuste del material proporcionado','mejora de presentación y ritmo según el tipo de pieza','adaptación del contenido al objetivo publicitario o comunicacional'],
+    benefit:'convertir material existente en una pieza más clara, presentable y coherente con el objetivo del proyecto.',
+    discovery:['qué material ya existe','qué resultado esperas','dónde se publicará','qué estilo o identidad debe respetarse']
+  },
+  imagenes:{
+    aliases:['imagen','imagenes','imagen publicitaria','imagenes publicitarias','post','posts','creativo','creativos','banner','flyer'],
+    ideal:['marcas que necesitan piezas visuales para promocionar productos, servicios, ofertas o información','proyectos que quieren mantener una comunicación visual profesional'],
+    possibilities:['composición publicitaria','integración de identidad visual','jerarquía de mensaje','adaptación al formato requerido por la publicación o campaña'],
+    benefit:'presentar el mensaje publicitario de forma clara, atractiva y coherente con la identidad del proyecto.',
+    discovery:['qué quieres promocionar','qué texto o datos deben aparecer','qué identidad visual debemos respetar','en qué plataforma o formato se utilizará']
+  },
+  campanas:{
+    aliases:['campana','campanas','campaña','campañas','campana publicitaria','campanas publicitarias','ads','publicidad pagada','anuncios pagados','pauta','pautar'],
+    ideal:['negocios que quieren promocionar una oferta mediante una campaña organizada','marcas que necesitan definir objetivo, mensaje y difusión publicitaria'],
+    possibilities:['planteamiento del objetivo de campaña','organización del mensaje y piezas necesarias','definición de la plataforma según el proyecto','orientación del público y duración de acuerdo con el alcance acordado'],
+    benefit:'ordenar la publicidad alrededor de un objetivo concreto para evitar publicar anuncios sin una dirección clara.',
+    discovery:['qué quieres conseguir con la campaña','qué producto o servicio se promociona','a quién quieres llegar','qué presupuesto y periodo se evaluarán para el proyecto']
+  }
+};
+
+const companyKnowledge={
+  name:'NovaVision GT',short:'NovaVision',category:'Marketing Digital y Desarrollo Web',
+  description:'NovaVision GT es una empresa especializada en Marketing Digital y Desarrollo Web, orientada a crear, desarrollar y fortalecer la presencia digital de empresas, marcas, comercios, emprendimientos y proyectos.',
+  mission:'Crear soluciones de Marketing Digital y Desarrollo Web que permitan a empresas, marcas, comercios y proyectos construir y fortalecer una presencia digital profesional, funcional y coherente, mediante herramientas tecnológicas, desarrollo, diseño y comunicación adaptados a sus necesidades.',
+  vision:'Consolidar a NovaVision GT como una empresa reconocida por integrar Marketing Digital y Desarrollo Web en soluciones modernas, funcionales y confiables, capaces de acompañar el crecimiento y la evolución digital de empresas, marcas y proyectos.',
+  purpose:'Convertir ideas, necesidades y objetivos empresariales en soluciones digitales que permitan a cada cliente mejorar su presencia, comunicación, funcionamiento y desarrollo dentro de los entornos digitales.',
+  objective:'Desarrollar soluciones de presencia digital y marketing que integren tecnología, diseño y comunicación para mejorar la forma en que empresas, marcas, comercios y proyectos se presentan, funcionan y promocionan en internet.',
+  values:['Innovación','Calidad','Responsabilidad','Creatividad','Claridad','Eficiencia','Profesionalismo','Evolución continua','Compromiso'],
+  slogan:'Tu visión, llevada al mundo digital.',parent:'OmniForce Evolution S.A.',country:'Guatemala',coverage:'Guatemala y atención de servicios digitales en línea',created:'03/11/2026'
+};
+
+const chatState={turn:0,lastService:null,lastIntent:null,lastUserText:'',lastBotText:'',lastResponseKey:'',detailLevel:0,history:[]};
+
+function addMessage(text,type='bot',extra=''){
+  const d=document.createElement('div');d.className=`msg ${type}${extra?' '+extra:''}`;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight;return d
+}
+function showTyping(){const d=document.createElement('div');d.className='msg bot typing';d.setAttribute('aria-label','Escribiendo');d.innerHTML='<i></i><i></i><i></i>';messages.appendChild(d);messages.scrollTop=messages.scrollHeight;return d}
+function setSuggestions(items=[]){suggestions.innerHTML='';items.slice(0,5).forEach(x=>{const b=document.createElement('button');b.type='button';b.className='suggest';b.textContent=x.label;b.onclick=()=>askBot(x.text);suggestions.appendChild(b)})}
+function pick(items,key=''){if(!items.length)return'';const base=chatState.turn+(key?key.length:0);return items[base%items.length]}
+function naturalJoin(items){if(!items.length)return'';if(items.length===1)return items[0];return items.slice(0,-1).join(', ')+' y '+items[items.length-1]}
+function normalize(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ\s]/g,' ').replace(/\s+/g,' ').trim()}
+function words(t){return normalize(t).split(' ').filter(Boolean)}
+function levenshtein(a,b){const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>Array(n+1));for(let i=0;i<=m;i++)dp[i][0]=i;for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return dp[m][n]}
+function fuzzyWord(a,b){if(a===b)return true;if(a.length<4||b.length<4)return false;const d=levenshtein(a,b);return d<=1||(Math.max(a.length,b.length)>=7&&d<=2)}
+function phraseMatch(text,phrase){const n=normalize(text),p=normalize(phrase);if(n.includes(p))return true;const tw=words(n),pw=words(p);if(pw.length===1)return tw.some(w=>fuzzyWord(w,pw[0]));return pw.every(x=>tw.some(w=>fuzzyWord(w,x)))}
+function serviceScores(q){const scores=[];for(const [id,k] of Object.entries(serviceKnowledge)){let score=0;for(const a of k.aliases){if(normalize(q).includes(normalize(a)))score+=a.includes(' ')?6:4;else if(phraseMatch(q,a))score+=2}if(score)scores.push([id,score])}return scores.sort((a,b)=>b[1]-a[1])}
+function identifyServices(q){return serviceScores(q).filter((x,i,a)=>x[1]>=2&&(i===0||x[1]>=a[0][1]-2)).map(x=>x[0])}
+function contextualService(q){const found=identifyServices(q);if(found.length)return found[0];const n=normalize(q);const follow=/^(y |tambien |ademas |eso |ese |esa |este |esta |cuanto |como |que |incluye |precio |tiempo |para que |me sirve |necesito |requisitos|proceso)/.test(n)||n.split(' ').length<=6;return follow?(chatState.lastService||activeService):null}
+function isAny(n,list){return list.some(x=>n.includes(x))}
+function wantsDetail(n){return isAny(n,['a detalle','detallado','detallada','explica bien','explicame bien','todo sobre','mas informacion','más informacion','profundiza','amplia','extenso','completo'])}
+function isGreeting(n){return /^(hola|buenas|buen dia|buenos dias|buenas tardes|buenas noches|hey|holi|que tal)(\s|$)/.test(n)}
+function isThanks(n){return /^(gracias|muchas gracias|perfecto gracias|ok gracias|vale gracias|excelente gracias)/.test(n)}
+function isBye(n){return /^(adios|hasta luego|nos vemos|bye|chao|chau)/.test(n)}
+function followSuggestions(id,intent){if(id&&services[id]){const s=services[id];const base=[{label:'¿Para quién sirve?',text:`¿Para quién sirve ${s.title}?`},{label:'¿Qué puede incluir?',text:`¿Qué puede incluir ${s.title}?`},{label:'¿Cómo sería el proceso?',text:`¿Cómo trabajan ${s.title}?`},{label:'¿Qué necesitan de mí?',text:`¿Qué necesitan de mí para ${s.title}?`},{label:'¿Precio?',text:`¿Cuánto cuesta ${s.title}?`}];if(intent==='price')return [{label:'¿Qué influye en el costo?',text:`¿Qué influye en el costo de ${s.title}?`},...base.slice(2,4)];return base}
+return [{label:'Páginas',text:'Quiero saber sobre páginas web'},{label:'Chatbots',text:'Explícame los chatbots'},{label:'Marketing Digital',text:'¿Qué hacen en marketing digital?'},{label:'¿Cuál me conviene?',text:'Ayúdame a elegir un servicio'}]}
+function serviceIntro(id){const s=services[id];const options=[`Sí. ${s.title} es uno de nuestros servicios de ${s.category}. ${s.short}`,`${s.title} forma parte del área de ${s.category} de NovaVision GT. ${s.short}`,`Claro. En ${s.title}, NovaVision GT trabaja el proyecto según la necesidad concreta del cliente. ${s.description}`];return pick(options,id)}
+function progressiveServiceAnswer(id,intent,n){const s=services[id],k=serviceKnowledge[id];chatState.lastService=id;activeService=id;const detailed=wantsDetail(n);let text='';
+if(intent==='what'){
+  text=serviceIntro(id);if(detailed)text+=`\n\nEn términos generales, este tipo de proyecto puede contemplar ${naturalJoin(k.possibilities)}. La configuración final se define según lo que realmente necesite el proyecto.`
+}else if(intent==='ideal'){
+  text=`Te puede servir especialmente si ${naturalJoin(k.ideal)}.`;if(detailed)text+=`\n\nLa idea no es aplicar una plantilla idéntica a todos los clientes, sino adaptar el servicio al objetivo real del proyecto.`
+}else if(intent==='benefit'){
+  text=`Su principal utilidad es ${k.benefit}`;if(detailed)text+=`\n\nPara saber si realmente encaja contigo, lo importante es entender primero qué resultado quieres conseguir.`
+}else if(intent==='includes'){
+  text=`Puede contemplar, según el proyecto: ${naturalJoin(k.possibilities)}.`;text+=`\n\nNo significa que todos los proyectos lleven exactamente lo mismo; el alcance se define antes de desarrollar.`
+}else if(intent==='process'){
+  text=`Primero necesitamos entender el objetivo y el alcance. Para ${s.title}, normalmente conviene definir ${naturalJoin(k.discovery)}. Con eso se puede estructurar una propuesta coherente antes de producir o desarrollar.`
+}else if(intent==='requirements'){
+  text=`Para orientarte bien con ${s.title}, lo más útil es que nos indiques ${naturalJoin(k.discovery)}. No necesitas tener todo resuelto desde el inicio; esas respuestas sirven para aterrizar el proyecto.`
+}else if(intent==='price'){
+  text=`No manejamos un precio universal publicado para ${s.title}. El costo depende del alcance real del proyecto, por eso no sería correcto inventarte una cifra aquí.`;if(detailed)text+=`\n\nLo que normalmente modifica el alcance es la cantidad de trabajo, las funciones o piezas necesarias, el nivel de personalización y los requerimientos concretos.`
+}else if(intent==='time'){
+  text=`No existe un plazo único oficialmente establecido para ${s.title}. El tiempo se determina después de conocer el alcance y los requerimientos del proyecto.`
+}else if(intent==='example'){
+  text=`Un ejemplo sencillo: si un cliente llega buscando ${k.ideal[0]}, ${s.title} puede utilizarse para ${k.benefit} El resultado exacto se adapta al caso real.`
+}else if(intent==='more'){
+  const next=chatState.detailLevel%3;chatState.detailLevel++;
+  if(next===0)text=`Un poco más: ${s.scope} En la práctica, puede contemplar ${naturalJoin(k.possibilities)}.`;
+  else if(next===1)text=`Para aterrizar ${s.title}, yo empezaría por estas preguntas: ${naturalJoin(k.discovery)}. Con esas respuestas se evita ofrecer algo genérico que no resuelva la necesidad real.`;
+  else text=`Lo más importante de ${s.title} es que ${k.benefit} Los detalles comerciales y técnicos se confirman de acuerdo con cada proyecto.`
+}else text=serviceIntro(id);
+return {text,suggestions:followSuggestions(id,intent)}
+}
+function detectIntent(n){
+  if(isGreeting(n))return'greeting';if(isThanks(n))return'thanks';if(isBye(n))return'bye';
+  if(isAny(n,['precio','cuanto cuesta','costo','coste','tarifa','cuanto vale','presupuesto']))return'price';
+  if(isAny(n,['tiempo','cuanto tarda','cuanto tardan','plazo','entrega','cuando estaria']))return'time';
+  if(isAny(n,['que incluye','incluye','puede incluir','que trae','caracteristicas','funciones']))return'includes';
+  if(isAny(n,['para quien','a quien le sirve','ideal para','quien necesita']))return'ideal';
+  if(isAny(n,['para que sirve','para que me sirve','beneficio','beneficios','que gano','utilidad']))return'benefit';
+  if(isAny(n,['como trabajan','como funciona','proceso','como lo hacen','pasos','como seria']))return'process';
+  if(isAny(n,['que necesitan','que necesito','requisitos','que debo dar','que tengo que enviar']))return'requirements';
+  if(isAny(n,['ejemplo','dame un ejemplo','por ejemplo']))return'example';
+  if(isAny(n,['mas','cuentame mas','dime mas','amplia','profundiza']))return'more';
+  if(isAny(n,['que es','de que trata','explica','informacion','información','quiero saber','hablame de']))return'what';
+  return'general'
+}
+function recommendService(n){
+  const goals=[
+    ['tiendas',['vender productos','vender en internet','tienda online','catalogo para vender','cobrar productos']],
+    ['paginas',['tener presencia','pagina para mi negocio','presentar mi empresa','sitio de mi empresa','web corporativa','mostrar mis servicios']],
+    ['biografias',['poner todos mis links','enlaces de redes','link en bio','una bio','tarjeta digital']],
+    ['chatbot',['responder clientes','preguntas automaticas','automatizar respuestas','atender por whatsapp','bot para clientes']],
+    ['apps',['necesito una app','crear una aplicacion','sistema en aplicacion','herramienta movil']],
+    ['videos',['video para promocionar','anuncio en video','reel publicitario','hacer videos']],
+    ['imagenes',['imagen para promocionar','post publicitario','flyer','banner','creativos']],
+    ['campanas',['conseguir clientes con anuncios','hacer publicidad pagada','campana de anuncios','pautar']],
+    ['edicion',['ya tengo un video','editar material','mejorar un video','editar contenido']]
+  ];
+  for(const [id,phrases] of goals)if(phrases.some(p=>phraseMatch(n,p)))return id;return null
+}
+function compareAnswer(ids){const [a,b]=ids.slice(0,2),sa=services[a],sb=services[b],ka=serviceKnowledge[a],kb=serviceKnowledge[b];return {text:`La diferencia principal es esta:\n\n${sa.title}: ${ka.benefit}\n\n${sb.title}: ${kb.benefit}\n\nSi me dices qué quieres conseguir, puedo orientarte entre los dos sin darte una respuesta genérica.`,suggestions:[{label:`Elegir ${sa.title}`,text:`Creo que necesito ${sa.title}, oriéntame`},{label:`Elegir ${sb.title}`,text:`Creo que necesito ${sb.title}, oriéntame`},{label:'Contarte mi objetivo',text:'Quiero contarte qué necesito'}]}}
+function institutionalAnswer(n){
+  if(n.includes('mision'))return{hit:true,text:`Nuestra misión es ${companyKnowledge.mission}`};
+  if(n.includes('vision'))return{hit:true,text:`Nuestra visión es ${companyKnowledge.vision}`};
+  if(n.includes('proposito'))return{hit:true,text:`Nuestro propósito es ${companyKnowledge.purpose}`};
+  if(n.includes('objetivo'))return{hit:true,text:`Nuestro objetivo general es ${companyKnowledge.objective}`};
+  if(n.includes('valor')||n.includes('valores'))return{hit:true,text:`Nuestros valores institucionales son: ${naturalJoin(companyKnowledge.values)}.`};
+  if(n.includes('eslogan')||n.includes('slogan'))return{hit:true,text:`Nuestro eslogan es: “${companyKnowledge.slogan}”`};
+  if(n.includes('omniforce')||n.includes('matriz')||n.includes('pertenece'))return{hit:true,text:`Sí. NovaVision GT pertenece oficialmente a ${companyKnowledge.parent}.`};
+  if(n.includes('cuando se creo')||n.includes('fecha')||n.includes('creacion')||n.includes('lanzamiento'))return{hit:true,text:`NovaVision GT fue creada y lanzada oficialmente el ${companyKnowledge.created}.`};
+  if(n.includes('pais')||n.includes('cobertura')||n.includes('donde trabajan')||n.includes('donde estan'))return{hit:true,text:`Nuestra base está en ${companyKnowledge.country}. La cobertura definida es ${companyKnowledge.coverage}.`};
+  if(n.includes('facebook')||n.includes('instagram')||n.includes('tiktok')||n.includes('clapper')||n.includes('redes'))return{hit:true,text:'NovaVision GT tiene canales oficiales en Facebook, Instagram, TikTok y Clapper. Puedes abrirlos directamente desde la sección “Canales oficiales” de esta página.'};
+  if(n.includes('whatsapp')&&isAny(n,['numero','telefono','contacto','escribirles']))return{hit:true,text:'Actualmente NovaVision GT no tiene definido WhatsApp o teléfono empresarial como canal oficial. Puedes utilizar las redes oficiales disponibles en esta página.'};
+  if(n.includes('quien es')||n.includes('que es novavision')||n.includes('que hace novavision')||n==='novavision'||n==='nova vision')return{hit:true,text:`${companyKnowledge.description} Trabajamos exclusivamente en dos áreas: Desarrollo y Marketing Digital.`};
+  return{hit:false}
+}
+function generalServicesAnswer(n){
+  const askAll=isAny(n,['todos los servicios','que servicios','servicios ofrecen','que ofrecen','que hacen']);
+  const askDev=n.includes('desarrollo')&&!n.includes('marketing');const askMkt=n.includes('marketing');
+  if(askDev)return{text:'En Desarrollo trabajamos seis servicios: páginas, tiendas, biografías, chatbot web o para WhatsApp, desarrollo de aplicaciones y el servicio de “Subimos aplicación a PlayStation/ solo desarmadas por nuestro equipo”. Si quieres, dime cuál te interesa y te explico solo ese.',suggestions:development.slice(0,5).map(id=>({label:services[id].title,text:`Cuéntame sobre ${services[id].title}`}))};
+  if(askMkt)return{text:'En Marketing Digital trabajamos cuatro servicios: videos publicitarios con IA o desarrollados desde cero, edición, imágenes publicitarias y creación de campañas publicitarias. Puedo explicarte cualquiera sin soltarte toda la información de golpe.',suggestions:marketing.map(id=>({label:services[id].title,text:`Cuéntame sobre ${services[id].title}`}))};
+  if(askAll)return{text:'Trabajamos en dos áreas: Desarrollo y Marketing Digital. En lugar de llenarte de información de una vez, dime qué necesitas lograr —por ejemplo vender, tener una página, automatizar atención, crear publicidad o desarrollar una app— y te digo qué servicio encaja mejor.',suggestions:[{label:'Desarrollo',text:'¿Qué tienen en Desarrollo?'},{label:'Marketing Digital',text:'¿Qué tienen en Marketing Digital?'},{label:'Ayúdame a elegir',text:'No sé qué servicio necesito, ayúdame a elegir'}]};
+  return null
+}
+function answer(q){
+  chatState.turn++;chatState.lastUserText=q;const n=normalize(q),intent=detectIntent(n);chatState.lastIntent=intent;
+  if(!n)return{text:'Escríbeme lo que quieras saber y lo revisamos.',suggestions:followSuggestions(chatState.lastService,'general')};
+  if(intent==='greeting')return{text:pick(['Hola. Claro, ¿qué necesitas saber?','Hola. Dime qué estás buscando y te oriento.','Hola. ¿En qué puedo ayudarte con NovaVision GT?'],'hello'),suggestions:followSuggestions(null,'general')};
+  if(intent==='thanks')return{text:pick(['Con gusto. Si quieres, seguimos con otra duda.','Claro. Si necesitas profundizar en algo, pregúntame directamente.','A la orden. Podemos seguir con el mismo servicio o revisar otro.'],'thanks'),suggestions:followSuggestions(chatState.lastService,'general')};
+  if(intent==='bye')return{text:'Hasta luego. Cuando quieras continuar, aquí estaré para orientarte sobre NovaVision GT.',suggestions:[]};
+
+  const institutional=institutionalAnswer(n);if(institutional.hit)return{text:institutional.text,suggestions:followSuggestions(null,'general')};
+  const generalServices=generalServicesAnswer(n);if(generalServices)return generalServices;
+
+  const explicit=identifyServices(q);
+  if(explicit.length>=2&&isAny(n,['diferencia','comparar','comparacion','cual','mejor para mi','entre']))return compareAnswer(explicit);
+
+  const recommendationIntent=isAny(n,['cual me conviene','que me conviene','que necesito','que servicio necesito','ayudame a elegir','recomienda','quiero hacer','quiero crear','necesito']);
+  const rec=recommendService(n);
+  if(recommendationIntent&&rec){chatState.lastService=rec;activeService=rec;return{text:`Por lo que describes, el servicio que más encaja es ${services[rec].title}. ${serviceKnowledge[rec].benefit} Si quieres, te hago unas preguntas cortas para aterrizar mejor lo que necesitas.`,suggestions:[{label:'Sí, oriéntame',text:`Oriéntame paso a paso para ${services[rec].title}`},{label:'¿Qué puede incluir?',text:`¿Qué puede incluir ${services[rec].title}?`},{label:'¿Cuánto cuesta?',text:`¿Cuánto cuesta ${services[rec].title}?`}]}}
+  if(recommendationIntent&&!rec&&isAny(n,['ayudame a elegir','que servicio necesito','cual me conviene']))return{text:'Sí. Dime en una frase qué quieres conseguir. Por ejemplo: “quiero vender productos”, “quiero una web para mi empresa”, “quiero responder clientes automáticamente” o “quiero hacer publicidad”. Con eso te oriento sin hacerte leer todo el catálogo.',suggestions:[{label:'Quiero vender',text:'Quiero vender productos por internet'},{label:'Quiero una web',text:'Quiero presentar mi empresa en internet'},{label:'Quiero automatizar',text:'Quiero responder clientes automáticamente'},{label:'Quiero publicidad',text:'Quiero promocionar mi negocio'}]};
+
+  const id=contextualService(q);
+  if(id){let effective=intent;if(intent==='general'){effective=wantsDetail(n)?'more':'what'};return progressiveServiceAnswer(id,effective,n)}
+
+  if(isAny(n,['publicidad','promocionar','anunciar','marketing'])&&!explicit.length)return{text:'Podemos trabajar la parte publicitaria desde distintos ángulos. Si necesitas crear el material, están videos, edición e imágenes publicitarias; si lo que buscas es organizar la difusión mediante anuncios, está el servicio de campañas publicitarias. ¿Qué necesitas exactamente: crear el contenido o lanzar una campaña?',suggestions:[{label:'Crear contenido',text:'Necesito crear contenido publicitario'},{label:'Lanzar campaña',text:'Necesito una campaña publicitaria'},{label:'No estoy seguro',text:'No sé cuál necesito, explícame la diferencia'}]};
+
+  if(isAny(n,['humano','persona real','asesor','hablar con alguien','contactar']))return{text:'Puedo orientarte con la información de NovaVision GT y ayudarte a definir qué servicio necesitas. Para contacto externo, utiliza los canales oficiales que aparecen en la sección de redes de esta página.',suggestions:[{label:'Ver servicios',text:'¿Qué servicios ofrecen?'},{label:'Redes oficiales',text:'¿Cuáles son sus redes oficiales?'}]};
+
+  return{text:pick([
+    'Entiendo la pregunta, pero necesito un poco más de contexto para responderte bien. ¿Te refieres a alguno de nuestros servicios o a información sobre NovaVision GT?',
+    'Puedo ayudarte con eso, pero prefiero no asumir. Dime si estás preguntando por Desarrollo, Marketing Digital o por la empresa en general.',
+    'No quiero darte una respuesta genérica. Cuéntame qué quieres lograr o menciona el servicio que tienes en mente y te respondo sobre eso.'
+  ],'fallback'),suggestions:followSuggestions(chatState.lastService,'general')}
+}
+function openChat(serviceId){
+  chat.classList.add('open');
+  if(!messages.dataset.started){addMessage('Hola. Soy el asistente de NovaVision GT. Puedes hablarme con naturalidad: cuéntame qué necesitas y te iré orientando paso a paso, sin llenarte de información que no hayas pedido.');messages.dataset.started='1'}
+  if(serviceId&&services[serviceId]){activeService=serviceId;chatState.lastService=serviceId;const s=services[serviceId];addMessage(`${s.title}. Sí, puedo explicarte este servicio. ¿Qué quieres saber primero?`);setSuggestions(followSuggestions(serviceId,'what'))}
+  else if(!suggestions.children.length)setSuggestions(followSuggestions(chatState.lastService,'general'));
+  setTimeout(()=>input.focus(),80)
+}
 function closeChat(){chat.classList.remove('open')}
-function normalize(t){return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function identifyService(q){const n=normalize(q);const map=[['playstation',['playstation','play station']],['chatbot',['chatbot','bot','whatsapp']],['campanas',['campana','campanas','ads','publicidad pagada']],['videos',['video','videos']],['imagenes',['imagen','imagenes','publicitaria','publicitarias']],['biografias',['biografia','biografias']],['tiendas',['tienda','tiendas','shop']],['paginas',['pagina','paginas','web']],['apps',['aplicacion','aplicaciones','app','apps']],['edicion',['edicion','editar']]];for(const [id,words] of map)if(words.some(w=>n.includes(w)))return id;return activeService}
-function answer(q){const n=normalize(q);if(/todos los servicios|que servicios|servicios ofrecen/.test(n)){return 'NovaVision GT trabaja exclusivamente en dos áreas:\n\nDESARROLLO: Páginas, Tiendas, Biografías, Chatbot web o para WhatsApp, Desarrollo de aplicaciones y “Subimos aplicación a PlayStation/ solo desarmadas por nuestro equipo”.\n\nMARKETING DIGITAL: Videos publicitarios con IA o desarrollados desde cero, Edición, Imágenes publicitarias y Creación de campañas publicitarias.'}
-if(/marketing/.test(n)&&!/precio|cuanto/.test(n))return 'En Marketing Digital, NovaVision GT ofrece exclusivamente: videos publicitarios con IA o desarrollados desde cero, edición, imágenes publicitarias y creación de campañas publicitarias.';
-if(/desarrollo/.test(n)&&!/precio|cuanto/.test(n))return 'En Desarrollo, NovaVision GT ofrece exclusivamente: páginas, tiendas, biografías, chatbot web o para WhatsApp, desarrollo de aplicaciones y “Subimos aplicación a PlayStation/ solo desarmadas por nuestro equipo”.';
-if(/quien|que es novavision|empresa|mision|vision|proposito|objetivo/.test(n)){if(n.includes('mision'))return 'Misión: Crear soluciones de Marketing Digital y Desarrollo Web que permitan a empresas, marcas, comercios y proyectos construir y fortalecer una presencia digital profesional, funcional y coherente, mediante herramientas tecnológicas, desarrollo, diseño y comunicación adaptados a sus necesidades.';if(n.includes('vision'))return 'Visión: Consolidar a NovaVision GT como una empresa reconocida por integrar Marketing Digital y Desarrollo Web en soluciones modernas, funcionales y confiables, capaces de acompañar el crecimiento y la evolución digital de empresas, marcas y proyectos.';if(n.includes('proposito'))return 'Propósito: Convertir ideas, necesidades y objetivos empresariales en soluciones digitales que permitan a cada cliente mejorar su presencia, comunicación, funcionamiento y desarrollo dentro de los entornos digitales.';return 'NovaVision GT es una empresa de Marketing Digital y Desarrollo Web, creada y lanzada el 03/11/2026, con base en Guatemala y atención de servicios digitales en línea. Pertenece oficialmente a OmniForce Evolution S.A.'}
-const id=identifyService(q),s=id?services[id]:null;if(s){activeService=id;if(/precio|cuanto cuesta|costo|coste|tarifa/.test(n))return `La información oficial de NovaVision GT no establece un precio general para “${s.title}”. El costo debe definirse según el proyecto y su alcance. No inventaré una tarifa que no esté autorizada.`;if(/tiempo|cuanto tarda|entrega|plazo/.test(n))return `No existe un plazo general oficialmente definido para “${s.title}”. El tiempo debe determinarse según el proyecto y sus requerimientos.`;if(/incluye|que hace|detalle|informacion|como funciona|ofrece/.test(n))return `${s.description}\n\n${s.scope}\n\n${s.note}`;return `${s.title} — ${s.category}\n\n${s.description}\n\n${s.scope}\n\n${s.note}`}
-if(/facebook|instagram|tiktok|clapper|redes/.test(n))return 'NovaVision GT cuenta con presencia oficial en Facebook, Instagram, TikTok y Clapper. Los accesos directos están disponibles en la sección “Canales oficiales” de esta página.';
-if(/pais|guatemala|cobertura|donde/.test(n))return 'País base: Guatemala. Cobertura: Guatemala y atención de servicios digitales en línea.';
-if(/slogan|eslogan/.test(n))return 'El eslogan oficial de NovaVision GT es: “Tu visión, llevada al mundo digital.”';
-return 'Esa información no está definida en los datos oficiales disponibles de NovaVision GT. Puedo responder sobre nuestros servicios de Desarrollo, Marketing Digital, identidad institucional, cobertura y canales oficiales. Si preguntas por un servicio específico, dime su nombre.'}
-function askBot(text){if(!text.trim())return;addMessage(text.trim(),'user');input.value='';setTimeout(()=>addMessage(answer(text.trim()),'bot'),120)}
+async function askBot(text){
+  const clean=String(text||'').trim();if(!clean)return;addMessage(clean,'user');input.value='';setSuggestions([]);const typing=showTyping();
+  const result=answer(clean);chatState.history.push({role:'user',text:clean});
+  const delay=Math.min(650,220+result.text.length*0.55);
+  await new Promise(r=>setTimeout(r,delay));typing.remove();addMessage(result.text,'bot');chatState.lastBotText=result.text;chatState.history.push({role:'assistant',text:result.text});if(chatState.history.length>16)chatState.history.splice(0,chatState.history.length-16);setSuggestions(result.suggestions||followSuggestions(chatState.lastService,chatState.lastIntent))
+}
 document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();askBot(input.value)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeChat()}});
 addEventListener('scroll',()=>{const h=document.documentElement;const max=h.scrollHeight-h.clientHeight;document.getElementById('progress').style.width=(max?Math.min(100,h.scrollTop/max*100):0)+'%'});
