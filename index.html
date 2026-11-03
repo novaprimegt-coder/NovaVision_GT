@@ -243,7 +243,37 @@ const companyKnowledge={
   slogan:'Tu visión, llevada al mundo digital.',parent:'OmniForce Evolution S.A.',country:'Guatemala',coverage:'Guatemala y atención de servicios digitales en línea',created:'03/11/2026'
 };
 
-const chatState={turn:0,lastService:null,lastIntent:null,lastUserText:'',lastBotText:'',lastResponseKey:'',detailLevel:0,history:[]};
+const chatState={
+  turn:0,
+  scopeMode:'general',
+  lockedService:null,
+  topicService:null,
+  lastService:null,
+  lastIntent:null,
+  lastUserText:'',
+  lastBotText:'',
+  detailLevel:0,
+  subtopic:null,
+  channel:null,
+  history:[]
+};
+
+const chatbotChannels={
+  web:{
+    label:'Chatbot web',
+    aliases:['web','sitio web','pagina','pagina web','en la web','para web','en el sitio'],
+    summary:'El chatbot web funciona dentro de una página o sitio web y se diseña para conversar con los visitantes, responder consultas relacionadas con el negocio y guiarlos usando la información definida para el proyecto.',
+    possibilities:['responder preguntas frecuentes','explicar servicios o productos','orientar al visitante paso a paso','dirigirlo hacia una acción o sección concreta','mantener una base de conocimiento adaptada al negocio'],
+    requirements:['la información que debe conocer','las preguntas que recibe el negocio','qué debe hacer cuando no tenga una respuesta','qué acciones debe sugerir al visitante']
+  },
+  whatsapp:{
+    label:'Chatbot para WhatsApp',
+    aliases:['whatsapp','wsp','wa','para whatsapp','en whatsapp'],
+    summary:'El chatbot para WhatsApp se plantea para atender conversaciones dentro de WhatsApp, responder consultas frecuentes y orientar a los clientes de acuerdo con la información y los flujos definidos para el proyecto.',
+    possibilities:['responder consultas frecuentes','orientar al cliente','presentar información del negocio','seguir flujos de atención','automatizar acciones cuando formen parte del alcance y la integración lo permita'],
+    requirements:['qué preguntas debe atender','qué información debe conocer','qué flujo debe seguir con el cliente','qué acciones o integraciones se necesitan realmente']
+  }
+};
 
 function addMessage(text,type='bot',extra=''){
   const d=document.createElement('div');d.className=`msg ${type}${extra?' '+extra:''}`;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight;return d
@@ -257,57 +287,159 @@ function words(t){return normalize(t).split(' ').filter(Boolean)}
 function levenshtein(a,b){const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>Array(n+1));for(let i=0;i<=m;i++)dp[i][0]=i;for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return dp[m][n]}
 function fuzzyWord(a,b){if(a===b)return true;if(a.length<4||b.length<4)return false;const d=levenshtein(a,b);return d<=1||(Math.max(a.length,b.length)>=7&&d<=2)}
 function phraseMatch(text,phrase){const n=normalize(text),p=normalize(phrase);if(n.includes(p))return true;const tw=words(n),pw=words(p);if(pw.length===1)return tw.some(w=>fuzzyWord(w,pw[0]));return pw.every(x=>tw.some(w=>fuzzyWord(w,x)))}
-function serviceScores(q){const scores=[];for(const [id,k] of Object.entries(serviceKnowledge)){let score=0;for(const a of k.aliases){if(normalize(q).includes(normalize(a)))score+=a.includes(' ')?6:4;else if(phraseMatch(q,a))score+=2}if(score)scores.push([id,score])}return scores.sort((a,b)=>b[1]-a[1])}
-function identifyServices(q){return serviceScores(q).filter((x,i,a)=>x[1]>=2&&(i===0||x[1]>=a[0][1]-2)).map(x=>x[0])}
-function contextualService(q){const found=identifyServices(q);if(found.length)return found[0];const n=normalize(q);const follow=/^(y |tambien |ademas |eso |ese |esa |este |esta |cuanto |como |que |incluye |precio |tiempo |para que |me sirve |necesito |requisitos|proceso)/.test(n)||n.split(' ').length<=6;return follow?(chatState.lastService||activeService):null}
 function isAny(n,list){return list.some(x=>n.includes(x))}
-function wantsDetail(n){return isAny(n,['a detalle','detallado','detallada','explica bien','explicame bien','todo sobre','mas informacion','más informacion','profundiza','amplia','extenso','completo'])}
+function wantsDetail(n){return isAny(n,['a detalle','detallado','detallada','explica bien','explicame bien','todo sobre','mas informacion','profundiza','amplia','extenso','completo'])}
 function isGreeting(n){return /^(hola|buenas|buen dia|buenos dias|buenas tardes|buenas noches|hey|holi|que tal)(\s|$)/.test(n)}
 function isThanks(n){return /^(gracias|muchas gracias|perfecto gracias|ok gracias|vale gracias|excelente gracias)/.test(n)}
 function isBye(n){return /^(adios|hasta luego|nos vemos|bye|chao|chau)/.test(n)}
-function followSuggestions(id,intent){if(id&&services[id]){const s=services[id];const base=[{label:'¿Para quién sirve?',text:`¿Para quién sirve ${s.title}?`},{label:'¿Qué puede incluir?',text:`¿Qué puede incluir ${s.title}?`},{label:'¿Cómo sería el proceso?',text:`¿Cómo trabajan ${s.title}?`},{label:'¿Qué necesitan de mí?',text:`¿Qué necesitan de mí para ${s.title}?`},{label:'¿Precio?',text:`¿Cuánto cuesta ${s.title}?`}];if(intent==='price')return [{label:'¿Qué influye en el costo?',text:`¿Qué influye en el costo de ${s.title}?`},...base.slice(2,4)];return base}
-return [{label:'Páginas',text:'Quiero saber sobre páginas web'},{label:'Chatbots',text:'Explícame los chatbots'},{label:'Marketing Digital',text:'¿Qué hacen en marketing digital?'},{label:'¿Cuál me conviene?',text:'Ayúdame a elegir un servicio'}]}
-function serviceIntro(id){const s=services[id];const options=[`Sí. ${s.title} es uno de nuestros servicios de ${s.category}. ${s.short}`,`${s.title} forma parte del área de ${s.category} de NovaVision GT. ${s.short}`,`Claro. En ${s.title}, NovaVision GT trabaja el proyecto según la necesidad concreta del cliente. ${s.description}`];return pick(options,id)}
-function progressiveServiceAnswer(id,intent,n){const s=services[id],k=serviceKnowledge[id];chatState.lastService=id;activeService=id;const detailed=wantsDetail(n);let text='';
-if(intent==='what'){
-  text=serviceIntro(id);if(detailed)text+=`\n\nEn términos generales, este tipo de proyecto puede contemplar ${naturalJoin(k.possibilities)}. La configuración final se define según lo que realmente necesite el proyecto.`
-}else if(intent==='ideal'){
-  text=`Te puede servir especialmente si ${naturalJoin(k.ideal)}.`;if(detailed)text+=`\n\nLa idea no es aplicar una plantilla idéntica a todos los clientes, sino adaptar el servicio al objetivo real del proyecto.`
-}else if(intent==='benefit'){
-  text=`Su principal utilidad es ${k.benefit}`;if(detailed)text+=`\n\nPara saber si realmente encaja contigo, lo importante es entender primero qué resultado quieres conseguir.`
-}else if(intent==='includes'){
-  text=`Puede contemplar, según el proyecto: ${naturalJoin(k.possibilities)}.`;text+=`\n\nNo significa que todos los proyectos lleven exactamente lo mismo; el alcance se define antes de desarrollar.`
-}else if(intent==='process'){
-  text=`Primero necesitamos entender el objetivo y el alcance. Para ${s.title}, normalmente conviene definir ${naturalJoin(k.discovery)}. Con eso se puede estructurar una propuesta coherente antes de producir o desarrollar.`
-}else if(intent==='requirements'){
-  text=`Para orientarte bien con ${s.title}, lo más útil es que nos indiques ${naturalJoin(k.discovery)}. No necesitas tener todo resuelto desde el inicio; esas respuestas sirven para aterrizar el proyecto.`
-}else if(intent==='price'){
-  text=`No manejamos un precio universal publicado para ${s.title}. El costo depende del alcance real del proyecto, por eso no sería correcto inventarte una cifra aquí.`;if(detailed)text+=`\n\nLo que normalmente modifica el alcance es la cantidad de trabajo, las funciones o piezas necesarias, el nivel de personalización y los requerimientos concretos.`
-}else if(intent==='time'){
-  text=`No existe un plazo único oficialmente establecido para ${s.title}. El tiempo se determina después de conocer el alcance y los requerimientos del proyecto.`
-}else if(intent==='example'){
-  text=`Un ejemplo sencillo: si un cliente llega buscando ${k.ideal[0]}, ${s.title} puede utilizarse para ${k.benefit} El resultado exacto se adapta al caso real.`
-}else if(intent==='more'){
-  const next=chatState.detailLevel%3;chatState.detailLevel++;
-  if(next===0)text=`Un poco más: ${s.scope} En la práctica, puede contemplar ${naturalJoin(k.possibilities)}.`;
-  else if(next===1)text=`Para aterrizar ${s.title}, yo empezaría por estas preguntas: ${naturalJoin(k.discovery)}. Con esas respuestas se evita ofrecer algo genérico que no resuelva la necesidad real.`;
-  else text=`Lo más importante de ${s.title} es que ${k.benefit} Los detalles comerciales y técnicos se confirman de acuerdo con cada proyecto.`
-}else text=serviceIntro(id);
-return {text,suggestions:followSuggestions(id,intent)}
+function isFollowUp(n){return /^(y |tambien |ademas |eso|ese|esa|este|esta|lo mismo|entonces|pero|cuanto|como|que|incluye|precio|tiempo|para que|me sirve|necesito|requisitos|proceso|web$|whatsapp$)/.test(n)||words(n).length<=5}
+function hasSwitchCue(n){return /(^|\s)(ahora|cambiando|cambiemos|otro tema|otra cosa|hablemos de|quiero saber de|quiero preguntar por|respecto a|sobre el servicio|sobre las|sobre los|y las|y los)(\s|$)/.test(n)}
+
+/* Referencias fuertes: "web" a secas NO identifica Páginas. Esto evita romper el hilo de Chatbot. */
+const strongServiceAliases={
+  paginas:['pagina web','paginas web','pagina para mi negocio','sitio web','sitio corporativo','landing page','landing','paginas'],
+  tiendas:['tienda','tiendas','tienda online','tienda en linea','ecommerce','e commerce'],
+  biografias:['biografia','biografias','link in bio','perfil digital','tarjeta digital'],
+  chatbot:['chatbot','chat bot','bot web','chatbot web','bot para web','bot whatsapp','chatbot para whatsapp','asistente virtual'],
+  apps:['aplicacion','aplicaciones','app','apps','aplicacion movil'],
+  playstation:['playstation','play station','subir a playstation','publicar en playstation'],
+  videos:['video publicitario','videos publicitarios','anuncio en video','reel publicitario'],
+  edicion:['edicion','editar contenido','edicion de video'],
+  imagenes:['imagen publicitaria','imagenes publicitarias','post publicitario','flyer','banner publicitario','creativos'],
+  campanas:['campana publicitaria','campanas publicitarias','publicidad pagada','anuncios pagados','pauta','pautar','ads']
+};
+function strongServiceMatches(q){
+  const n=normalize(q),out=[];
+  for(const [id,aliases] of Object.entries(strongServiceAliases)){
+    let score=0,exact=false;
+    for(const a of aliases){const p=normalize(a);if(n.includes(p)){score+=p.includes(' ')?8:5;exact=true}else if(phraseMatch(n,p))score+=2}
+    if(score)out.push({id,score,exact})
+  }
+  return out.sort((a,b)=>b.score-a.score)
 }
+function detectChannel(n){
+  if(/\bwhatsapp\b|\bwsp\b|\bwa\b/.test(n))return'whatsapp';
+  if(/\bweb\b|\bsitio\b|\ben la pagina\b|\bpara la pagina\b|\bpagina web\b/.test(n))return'web';
+  return null
+}
+function explicitOtherServiceInLockedScope(q){
+  if(chatState.scopeMode!=='service'||!chatState.lockedService)return null;
+  const matches=strongServiceMatches(q).filter(x=>x.id!==chatState.lockedService);
+  if(!matches.length)return null;
+  /* En Chatbot, "página web" puede seguir significando el canal web; solo lo tratamos como otro servicio con un cambio inequívoco. */
+  const n=normalize(q);
+  if(chatState.lockedService==='chatbot'&&matches[0].id==='paginas'&&!hasSwitchCue(n)&&!isAny(n,['servicio de paginas','desarrollo de paginas','crear una pagina','hacer una pagina']))return null;
+  return matches[0].id
+}
+function resolveService(q){
+  const n=normalize(q);
+  if(chatState.scopeMode==='service'&&chatState.lockedService)return {id:chatState.lockedService,changed:false,locked:true};
+  const current=chatState.topicService||chatState.lastService||activeService||null;
+  const matches=strongServiceMatches(q);
+  if(!matches.length)return {id:current,changed:false,locked:false};
+  const top=matches[0];
+  if(!current)return {id:top.id,changed:true,locked:false};
+  if(top.id===current)return {id:current,changed:false,locked:false};
+  const strongExplicit=top.score>=8;
+  const directNamed=/^(pagina|paginas|tienda|tiendas|biografia|biografias|chatbot|bot|aplicacion|aplicaciones|video|videos|edicion|imagenes|campana|campanas|playstation)/.test(n);
+  const switchNow=hasSwitchCue(n)||strongExplicit||directNamed;
+  if(switchNow)return {id:top.id,changed:true,locked:false};
+  if(isFollowUp(n))return {id:current,changed:false,locked:false};
+  return {id:top.id,changed:true,locked:false}
+}
+function updateContext(serviceId,n,{changed=false}={}){
+  if(serviceId){
+    if(changed&&serviceId!==chatState.topicService){chatState.detailLevel=0;chatState.subtopic=null;chatState.channel=null}
+    chatState.topicService=serviceId;chatState.lastService=serviceId;activeService=serviceId;
+    if(serviceId==='chatbot'){
+      const channel=detectChannel(n);
+      if(channel){chatState.channel=channel;chatState.subtopic=`chatbot-${channel}`}
+    }else if(changed){chatState.channel=null;chatState.subtopic=null}
+  }
+}
+function followSuggestions(id,intent){
+  if(id&&services[id]){
+    const s=services[id];
+    if(id==='chatbot'){
+      const channelBase=chatState.channel?`${chatbotChannels[chatState.channel].label}`:'el chatbot';
+      const base=[
+        {label:'Chatbot web',text:'¿Y en web cómo funcionaría?'},
+        {label:'Chatbot WhatsApp',text:'¿Y para WhatsApp cómo funcionaría?'},
+        {label:'¿Qué puede hacer?',text:`¿Qué puede hacer ${channelBase}?`},
+        {label:'¿Qué necesitan?',text:`¿Qué necesitan de mí para ${channelBase}?`},
+        {label:'¿Precio?',text:`¿Cuánto cuesta ${channelBase}?`}
+      ];
+      if(chatState.scopeMode==='service')return base;
+    }
+    const base=[{label:'¿Para quién sirve?',text:`¿Para quién sirve ${s.title}?`},{label:'¿Qué puede incluir?',text:`¿Qué puede incluir ${s.title}?`},{label:'¿Cómo sería el proceso?',text:`¿Cómo trabajan ${s.title}?`},{label:'¿Qué necesitan de mí?',text:`¿Qué necesitan de mí para ${s.title}?`},{label:'¿Precio?',text:`¿Cuánto cuesta ${s.title}?`}];
+    if(intent==='price')return [{label:'¿Qué influye en el costo?',text:`¿Qué influye en el costo de ${s.title}?`},...base.slice(2,4)];return base
+  }
+  return [{label:'Páginas',text:'Quiero saber sobre páginas web'},{label:'Chatbots',text:'Explícame los chatbots'},{label:'Marketing Digital',text:'¿Qué hacen en marketing digital?'},{label:'¿Cuál me conviene?',text:'Ayúdame a elegir un servicio'}]
+}
+function serviceIntro(id){const s=services[id];const options=[`Sí. ${s.title} es uno de nuestros servicios de ${s.category}. ${s.short}`,`${s.title} forma parte del área de ${s.category} de NovaVision GT. ${s.short}`,`Claro. En ${s.title}, NovaVision GT trabaja el proyecto según la necesidad concreta del cliente. ${s.description}`];return pick(options,id)}
 function detectIntent(n){
   if(isGreeting(n))return'greeting';if(isThanks(n))return'thanks';if(isBye(n))return'bye';
+  if(isAny(n,['diferencia','diferencias','comparar','comparacion','cual conviene','cual es mejor']))return'compare';
   if(isAny(n,['precio','cuanto cuesta','costo','coste','tarifa','cuanto vale','presupuesto']))return'price';
   if(isAny(n,['tiempo','cuanto tarda','cuanto tardan','plazo','entrega','cuando estaria']))return'time';
-  if(isAny(n,['que incluye','incluye','puede incluir','que trae','caracteristicas','funciones']))return'includes';
+  if(isAny(n,['que incluye','incluye','puede incluir','que trae','caracteristicas','funciones','que puede hacer']))return'includes';
   if(isAny(n,['para quien','a quien le sirve','ideal para','quien necesita']))return'ideal';
   if(isAny(n,['para que sirve','para que me sirve','beneficio','beneficios','que gano','utilidad']))return'benefit';
-  if(isAny(n,['como trabajan','como funciona','proceso','como lo hacen','pasos','como seria']))return'process';
+  if(isAny(n,['como trabajan','como funciona','proceso','como lo hacen','pasos','como seria','como funcionaria']))return'process';
   if(isAny(n,['que necesitan','que necesito','requisitos','que debo dar','que tengo que enviar']))return'requirements';
   if(isAny(n,['ejemplo','dame un ejemplo','por ejemplo']))return'example';
   if(isAny(n,['mas','cuentame mas','dime mas','amplia','profundiza']))return'more';
-  if(isAny(n,['que es','de que trata','explica','informacion','información','quiero saber','hablame de']))return'what';
+  if(isAny(n,['que es','de que trata','explica','informacion','quiero saber','hablame de']))return'what';
   return'general'
+}
+function chatbotChannelAnswer(intent,n){
+  const detected=detectChannel(n);
+  if(detected){chatState.channel=detected;chatState.subtopic=`chatbot-${detected}`}
+  const ch=chatState.channel;
+  if(intent==='compare'||(isAny(n,['web','whatsapp'])&&isAny(n,['diferencia','versus','vs','cual']))){
+    return {text:'La diferencia principal es el canal. El chatbot web atiende dentro de una página o sitio web; el chatbot para WhatsApp atiende conversaciones dentro de WhatsApp. La lógica, conocimiento y acciones se adaptan al proyecto en ambos casos. La elección depende de dónde llegan tus clientes y qué necesitas que haga el asistente.',suggestions:[{label:'Quiero web',text:'Me interesa el chatbot web'},{label:'Quiero WhatsApp',text:'Me interesa el chatbot para WhatsApp'},{label:'¿Cuál me conviene?',text:'¿Cuál me conviene según mi caso?'}]}
+  }
+  if(!ch)return null;
+  const k=chatbotChannels[ch];
+  if(intent==='includes')return{text:`En ${k.label}, según el proyecto, se puede trabajar para ${naturalJoin(k.possibilities)}. No todos los bots llevan exactamente las mismas funciones: se define solo lo que el negocio necesita.`,suggestions:followSuggestions('chatbot','includes')};
+  if(intent==='requirements')return{text:`Para plantear bien ${k.label}, conviene definir ${naturalJoin(k.requirements)}. Con eso se construye el comportamiento del asistente alrededor del negocio, no alrededor de respuestas genéricas.`,suggestions:followSuggestions('chatbot','requirements')};
+  if(intent==='process')return{text:`En ${k.label}, primero se define qué debe saber, qué preguntas debe resolver y qué camino debe seguir con el usuario. Después se estructura la conversación y las funciones necesarias para ese canal.`,suggestions:followSuggestions('chatbot','process')};
+  if(intent==='price')return{text:`No hay un precio universal publicado para ${k.label}. El costo depende de cuánto conocimiento debe manejar, qué flujos necesita, qué acciones debe realizar y qué integración requiere el proyecto.`,suggestions:followSuggestions('chatbot','price')};
+  if(intent==='time')return{text:`No existe un plazo único para ${k.label}. El tiempo depende del alcance, la cantidad de información, los flujos y las integraciones que deba tener.`,suggestions:followSuggestions('chatbot','time')};
+  if(intent==='benefit')return{text:`La utilidad de ${k.label} es atender y orientar al usuario dentro de ese canal de forma más inmediata y ordenada, usando la información definida para el negocio.`,suggestions:followSuggestions('chatbot','benefit')};
+  return{text:k.summary,suggestions:followSuggestions('chatbot','what')}
+}
+function progressiveServiceAnswer(id,intent,n){
+  const s=services[id],k=serviceKnowledge[id];updateContext(id,n);const detailed=wantsDetail(n);let text='';
+  if(id==='chatbot'){
+    const channelReply=chatbotChannelAnswer(intent,n);
+    if(channelReply&&(detectChannel(n)||chatState.channel))return channelReply
+  }
+  if(intent==='what'){
+    text=serviceIntro(id);if(detailed)text+=`\n\nEn términos generales, este tipo de proyecto puede contemplar ${naturalJoin(k.possibilities)}. La configuración final se define según lo que realmente necesite el proyecto.`
+  }else if(intent==='ideal'){
+    text=`Te puede servir especialmente si ${naturalJoin(k.ideal)}.`;if(detailed)text+=`\n\nLa idea no es aplicar una plantilla idéntica a todos los clientes, sino adaptar el servicio al objetivo real del proyecto.`
+  }else if(intent==='benefit'){
+    text=`Su principal utilidad es ${k.benefit}`;if(detailed)text+=`\n\nPara saber si realmente encaja contigo, lo importante es entender primero qué resultado quieres conseguir.`
+  }else if(intent==='includes'){
+    text=`Puede contemplar, según el proyecto: ${naturalJoin(k.possibilities)}.`;text+=`\n\nNo significa que todos los proyectos lleven exactamente lo mismo; el alcance se define antes de desarrollar.`
+  }else if(intent==='process'){
+    text=`Primero necesitamos entender el objetivo y el alcance. Para ${s.title}, normalmente conviene definir ${naturalJoin(k.discovery)}. Con eso se puede estructurar una propuesta coherente antes de producir o desarrollar.`
+  }else if(intent==='requirements'){
+    text=`Para orientarte bien con ${s.title}, lo más útil es que nos indiques ${naturalJoin(k.discovery)}. No necesitas tener todo resuelto desde el inicio; esas respuestas sirven para aterrizar el proyecto.`
+  }else if(intent==='price'){
+    text=`No manejamos un precio universal publicado para ${s.title}. El costo depende del alcance real del proyecto, por eso no sería correcto inventarte una cifra aquí.`;if(detailed)text+=`\n\nLo que normalmente modifica el alcance es la cantidad de trabajo, las funciones o piezas necesarias, el nivel de personalización y los requerimientos concretos.`
+  }else if(intent==='time'){
+    text=`No existe un plazo único oficialmente establecido para ${s.title}. El tiempo se determina después de conocer el alcance y los requerimientos del proyecto.`
+  }else if(intent==='example'){
+    text=`Un ejemplo sencillo: si un cliente llega buscando ${k.ideal[0]}, ${s.title} puede utilizarse para ${k.benefit} El resultado exacto se adapta al caso real.`
+  }else if(intent==='more'){
+    const next=chatState.detailLevel%3;chatState.detailLevel++;
+    if(next===0)text=`Un poco más: ${s.scope} En la práctica, puede contemplar ${naturalJoin(k.possibilities)}.`;
+    else if(next===1)text=`Para aterrizar ${s.title}, yo empezaría por estas preguntas: ${naturalJoin(k.discovery)}. Con esas respuestas se evita ofrecer algo genérico que no resuelva la necesidad real.`;
+    else text=`Lo más importante de ${s.title} es que ${k.benefit} Los detalles comerciales y técnicos se confirman de acuerdo con cada proyecto.`
+  }else text=serviceIntro(id);
+  return {text,suggestions:followSuggestions(id,intent)}
 }
 function recommendService(n){
   const goals=[
@@ -347,50 +479,80 @@ function generalServicesAnswer(n){
   if(askAll)return{text:'Trabajamos en dos áreas: Desarrollo y Marketing Digital. En lugar de llenarte de información de una vez, dime qué necesitas lograr —por ejemplo vender, tener una página, automatizar atención, crear publicidad o desarrollar una app— y te digo qué servicio encaja mejor.',suggestions:[{label:'Desarrollo',text:'¿Qué tienen en Desarrollo?'},{label:'Marketing Digital',text:'¿Qué tienen en Marketing Digital?'},{label:'Ayúdame a elegir',text:'No sé qué servicio necesito, ayúdame a elegir'}]};
   return null
 }
+function lockedScopeRedirect(otherId){
+  const current=services[chatState.lockedService];
+  const other=services[otherId];
+  return {text:`En esta conversación estoy enfocado únicamente en ${current.title}, porque entraste desde ese servicio. No voy a mezclarlo con ${other.title}. Si quieres consultar ${other.title}, vuelve a la lista de servicios y abre “Más información” desde ese servicio. Aquí puedo seguir respondiéndote todo sobre ${current.title}.`,suggestions:followSuggestions(chatState.lockedService,'general')}
+}
 function answer(q){
   chatState.turn++;chatState.lastUserText=q;const n=normalize(q),intent=detectIntent(n);chatState.lastIntent=intent;
-  if(!n)return{text:'Escríbeme lo que quieras saber y lo revisamos.',suggestions:followSuggestions(chatState.lastService,'general')};
-  if(intent==='greeting')return{text:pick(['Hola. Claro, ¿qué necesitas saber?','Hola. Dime qué estás buscando y te oriento.','Hola. ¿En qué puedo ayudarte con NovaVision GT?'],'hello'),suggestions:followSuggestions(null,'general')};
-  if(intent==='thanks')return{text:pick(['Con gusto. Si quieres, seguimos con otra duda.','Claro. Si necesitas profundizar en algo, pregúntame directamente.','A la orden. Podemos seguir con el mismo servicio o revisar otro.'],'thanks'),suggestions:followSuggestions(chatState.lastService,'general')};
-  if(intent==='bye')return{text:'Hasta luego. Cuando quieras continuar, aquí estaré para orientarte sobre NovaVision GT.',suggestions:[]};
+  if(!n)return{text:'Escríbeme lo que quieras saber y lo revisamos.',suggestions:followSuggestions(chatState.topicService,'general')};
+  if(intent==='greeting')return{text:pick(['Hola. Claro, ¿qué necesitas saber?','Hola. Dime qué quieres revisar y seguimos desde ahí.','Hola. ¿Qué te gustaría saber?'],'hello'),suggestions:followSuggestions(chatState.topicService,'general')};
+  if(intent==='thanks')return{text:pick(['Con gusto. Seguimos con el mismo tema cuando quieras.','Claro. Si quieres, profundizamos en lo que estamos viendo.','A la orden. Pregúntame lo siguiente sobre este tema.'],'thanks'),suggestions:followSuggestions(chatState.topicService,'general')};
+  if(intent==='bye')return{text:'Hasta luego. Cuando quieras continuar, retomamos desde donde quedamos.',suggestions:[]};
 
-  const institutional=institutionalAnswer(n);if(institutional.hit)return{text:institutional.text,suggestions:followSuggestions(null,'general')};
-  const generalServices=generalServicesAnswer(n);if(generalServices)return generalServices;
+  /* Si el usuario abrió el chat desde un servicio, el alcance queda bloqueado a ese servicio. */
+  if(chatState.scopeMode==='service'&&chatState.lockedService){
+    const other=explicitOtherServiceInLockedScope(q);if(other)return lockedScopeRedirect(other);
+    const offScopeInstitutional=institutionalAnswer(n).hit;
+    const offScopeCatalog=isAny(n,['todos los servicios','que servicios','servicios ofrecen','que ofrecen','marketing digital','servicios de marketing','servicios de desarrollo','area de marketing','area de desarrollo']);
+    if(offScopeInstitutional||offScopeCatalog)return {text:`Este chat está enfocado únicamente en ${services[chatState.lockedService].title}. Para consultar información general de NovaVision GT u otros servicios, utiliza el asistente general. Aquí seguimos únicamente con este servicio.`,suggestions:followSuggestions(chatState.lockedService,'general')};
+    const id=chatState.lockedService;updateContext(id,n);
+    let effective=intent;if(effective==='general')effective=wantsDetail(n)?'more':'what';
+    return progressiveServiceAnswer(id,effective,n)
+  }
 
-  const explicit=identifyServices(q);
-  if(explicit.length>=2&&isAny(n,['diferencia','comparar','comparacion','cual','mejor para mi','entre']))return compareAnswer(explicit);
+  /* Un cambio explícito hacia el catálogo o hacia un área completa rompe el hilo del servicio anterior. */
+  const categorySwitch=isAny(n,['todos los servicios','que servicios','servicios ofrecen','que ofrecen','marketing digital','servicios de marketing','servicios de desarrollo','area de marketing','area de desarrollo'])&&!strongServiceMatches(q).length;
+  if(categorySwitch){chatState.topicService=null;chatState.lastService=null;chatState.channel=null;chatState.subtopic=null;activeService=null;const categoryAnswer=generalServicesAnswer(n);if(categoryAnswer)return categoryAnswer}
+
+  /* En modo general, primero respetamos el hilo actual; solo cambiamos si el mensaje realmente identifica otro servicio. */
+  const resolved=resolveService(q);
+  if(resolved.id){updateContext(resolved.id,n,{changed:resolved.changed})}
+
+  /* Preguntas institucionales se atienden solo en modo general. */
+  const institutional=institutionalAnswer(n);if(institutional.hit&&!strongServiceMatches(q).length)return{text:institutional.text,suggestions:followSuggestions(chatState.topicService,'general')};
+
+  const explicit=strongServiceMatches(q).map(x=>x.id);
+  if(explicit.length>=2&&intent==='compare')return compareAnswer(explicit);
 
   const recommendationIntent=isAny(n,['cual me conviene','que me conviene','que necesito','que servicio necesito','ayudame a elegir','recomienda','quiero hacer','quiero crear','necesito']);
   const rec=recommendService(n);
-  if(recommendationIntent&&rec){chatState.lastService=rec;activeService=rec;return{text:`Por lo que describes, el servicio que más encaja es ${services[rec].title}. ${serviceKnowledge[rec].benefit} Si quieres, te hago unas preguntas cortas para aterrizar mejor lo que necesitas.`,suggestions:[{label:'Sí, oriéntame',text:`Oriéntame paso a paso para ${services[rec].title}`},{label:'¿Qué puede incluir?',text:`¿Qué puede incluir ${services[rec].title}?`},{label:'¿Cuánto cuesta?',text:`¿Cuánto cuesta ${services[rec].title}?`}]}}
-  if(recommendationIntent&&!rec&&isAny(n,['ayudame a elegir','que servicio necesito','cual me conviene']))return{text:'Sí. Dime en una frase qué quieres conseguir. Por ejemplo: “quiero vender productos”, “quiero una web para mi empresa”, “quiero responder clientes automáticamente” o “quiero hacer publicidad”. Con eso te oriento sin hacerte leer todo el catálogo.',suggestions:[{label:'Quiero vender',text:'Quiero vender productos por internet'},{label:'Quiero una web',text:'Quiero presentar mi empresa en internet'},{label:'Quiero automatizar',text:'Quiero responder clientes automáticamente'},{label:'Quiero publicidad',text:'Quiero promocionar mi negocio'}]};
+  if(recommendationIntent&&rec&&(!chatState.topicService||resolved.changed||hasSwitchCue(n))){updateContext(rec,n,{changed:true});return{text:`Por lo que describes, el servicio que más encaja es ${services[rec].title}. ${serviceKnowledge[rec].benefit} Si quieres, te hago unas preguntas cortas para aterrizar mejor lo que necesitas.`,suggestions:[{label:'Sí, oriéntame',text:`Oriéntame paso a paso para ${services[rec].title}`},{label:'¿Qué puede incluir?',text:`¿Qué puede incluir ${services[rec].title}?`},{label:'¿Cuánto cuesta?',text:`¿Cuánto cuesta ${services[rec].title}?`}]}}
+  if(recommendationIntent&&!rec&&!chatState.topicService&&isAny(n,['ayudame a elegir','que servicio necesito','cual me conviene']))return{text:'Sí. Dime en una frase qué quieres conseguir. Por ejemplo: “quiero vender productos”, “quiero una web para mi empresa”, “quiero responder clientes automáticamente” o “quiero hacer publicidad”. Con eso te oriento sin hacerte leer todo el catálogo.',suggestions:[{label:'Quiero vender',text:'Quiero vender productos por internet'},{label:'Quiero una web',text:'Quiero presentar mi empresa en internet'},{label:'Quiero automatizar',text:'Quiero responder clientes automáticamente'},{label:'Quiero publicidad',text:'Quiero promocionar mi negocio'}]};
 
-  const id=contextualService(q);
-  if(id){let effective=intent;if(intent==='general'){effective=wantsDetail(n)?'more':'what'};return progressiveServiceAnswer(id,effective,n)}
+  if(chatState.topicService){let effective=intent;if(effective==='general')effective=wantsDetail(n)?'more':'what';return progressiveServiceAnswer(chatState.topicService,effective,n)}
 
-  if(isAny(n,['publicidad','promocionar','anunciar','marketing'])&&!explicit.length)return{text:'Podemos trabajar la parte publicitaria desde distintos ángulos. Si necesitas crear el material, están videos, edición e imágenes publicitarias; si lo que buscas es organizar la difusión mediante anuncios, está el servicio de campañas publicitarias. ¿Qué necesitas exactamente: crear el contenido o lanzar una campaña?',suggestions:[{label:'Crear contenido',text:'Necesito crear contenido publicitario'},{label:'Lanzar campaña',text:'Necesito una campaña publicitaria'},{label:'No estoy seguro',text:'No sé cuál necesito, explícame la diferencia'}]};
-
+  const generalServices=generalServicesAnswer(n);if(generalServices)return generalServices;
+  if(isAny(n,['publicidad','promocionar','anunciar','marketing']))return{text:'Podemos trabajar la parte publicitaria desde distintos ángulos. Si necesitas crear el material, están videos, edición e imágenes publicitarias; si lo que buscas es organizar la difusión mediante anuncios, está el servicio de campañas publicitarias. ¿Qué necesitas exactamente: crear el contenido o lanzar una campaña?',suggestions:[{label:'Crear contenido',text:'Necesito crear contenido publicitario'},{label:'Lanzar campaña',text:'Necesito una campaña publicitaria'},{label:'No estoy seguro',text:'No sé cuál necesito, explícame la diferencia'}]};
   if(isAny(n,['humano','persona real','asesor','hablar con alguien','contactar']))return{text:'Puedo orientarte con la información de NovaVision GT y ayudarte a definir qué servicio necesitas. Para contacto externo, utiliza los canales oficiales que aparecen en la sección de redes de esta página.',suggestions:[{label:'Ver servicios',text:'¿Qué servicios ofrecen?'},{label:'Redes oficiales',text:'¿Cuáles son sus redes oficiales?'}]};
-
-  return{text:pick([
-    'Entiendo la pregunta, pero necesito un poco más de contexto para responderte bien. ¿Te refieres a alguno de nuestros servicios o a información sobre NovaVision GT?',
-    'Puedo ayudarte con eso, pero prefiero no asumir. Dime si estás preguntando por Desarrollo, Marketing Digital o por la empresa en general.',
-    'No quiero darte una respuesta genérica. Cuéntame qué quieres lograr o menciona el servicio que tienes en mente y te respondo sobre eso.'
-  ],'fallback'),suggestions:followSuggestions(chatState.lastService,'general')}
+  return{text:pick(['Entiendo. Para seguir el hilo correctamente, dime en una frase qué servicio o necesidad estás viendo.','Puedo seguirte, pero aquí todavía no tenemos un tema concreto. Dime qué quieres lograr y lo tomamos desde ahí.','No quiero asumir un servicio equivocado. Cuéntame qué necesitas conseguir y te respondo sobre eso.'],'fallback'),suggestions:followSuggestions(null,'general')}
+}
+function resetScope(mode,serviceId=null){
+  chatState.scopeMode=mode;chatState.lockedService=mode==='service'?serviceId:null;chatState.topicService=serviceId||null;chatState.lastService=serviceId||null;chatState.lastIntent=null;chatState.detailLevel=0;chatState.subtopic=null;chatState.channel=null;chatState.history=[];activeService=serviceId||null
 }
 function openChat(serviceId){
   chat.classList.add('open');
-  if(!messages.dataset.started){addMessage('Hola. Soy el asistente de NovaVision GT. Puedes hablarme con naturalidad: cuéntame qué necesitas y te iré orientando paso a paso, sin llenarte de información que no hayas pedido.');messages.dataset.started='1'}
-  if(serviceId&&services[serviceId]){activeService=serviceId;chatState.lastService=serviceId;const s=services[serviceId];addMessage(`${s.title}. Sí, puedo explicarte este servicio. ¿Qué quieres saber primero?`);setSuggestions(followSuggestions(serviceId,'what'))}
-  else if(!suggestions.children.length)setSuggestions(followSuggestions(chatState.lastService,'general'));
+  const enteringService=serviceId&&services[serviceId];
+  if(enteringService){
+    const changedScope=chatState.scopeMode!=='service'||chatState.lockedService!==serviceId;
+    if(changedScope){messages.innerHTML='';messages.dataset.started='';resetScope('service',serviceId)}
+    if(!messages.dataset.started){const s=services[serviceId];addMessage(`Perfecto. Hablemos únicamente de ${s.title}. Puedes preguntarme con naturalidad; voy a mantener este servicio como contexto durante toda esta conversación.`);messages.dataset.started='1'}
+    setSuggestions(followSuggestions(serviceId,'what'))
+  }else{
+    if(chatState.scopeMode==='service'){messages.innerHTML='';messages.dataset.started='';resetScope('general',null)}
+    else if(!messages.dataset.started)resetScope('general',null);
+    if(!messages.dataset.started){addMessage('Hola. Soy el asistente de NovaVision GT. Puedes hablarme con naturalidad: mantendré el hilo de lo que estemos conversando y solo cambiaré de servicio cuando realmente cambies de tema.');messages.dataset.started='1'}
+    if(!suggestions.children.length)setSuggestions(followSuggestions(chatState.topicService,'general'))
+  }
   setTimeout(()=>input.focus(),80)
 }
 function closeChat(){chat.classList.remove('open')}
 async function askBot(text){
   const clean=String(text||'').trim();if(!clean)return;addMessage(clean,'user');input.value='';setSuggestions([]);const typing=showTyping();
-  const result=answer(clean);chatState.history.push({role:'user',text:clean});
-  const delay=Math.min(650,220+result.text.length*0.55);
-  await new Promise(r=>setTimeout(r,delay));typing.remove();addMessage(result.text,'bot');chatState.lastBotText=result.text;chatState.history.push({role:'assistant',text:result.text});if(chatState.history.length>16)chatState.history.splice(0,chatState.history.length-16);setSuggestions(result.suggestions||followSuggestions(chatState.lastService,chatState.lastIntent))
+  const result=answer(clean);chatState.history.push({role:'user',text:clean,service:chatState.topicService,channel:chatState.channel});
+  const delay=Math.min(700,210+result.text.length*0.5);
+  await new Promise(r=>setTimeout(r,delay));typing.remove();addMessage(result.text,'bot');chatState.lastBotText=result.text;chatState.history.push({role:'assistant',text:result.text,service:chatState.topicService,channel:chatState.channel});if(chatState.history.length>20)chatState.history.splice(0,chatState.history.length-20);setSuggestions(result.suggestions||followSuggestions(chatState.topicService,chatState.lastIntent))
 }
 document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();askBot(input.value)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeChat()}});
