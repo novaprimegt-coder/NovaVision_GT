@@ -101,18 +101,23 @@ html,body,body *{-webkit-tap-highlight-color:transparent}html{touch-action:manip
 .flux-lines-page-layer{
   position:fixed;
   inset:0;
-  z-index:0;
+  z-index:6;
   width:100vw;
   height:100vh;
   height:100dvh;
   pointer-events:none;
   overflow:hidden;
-  opacity:.78;
+  opacity:.82;
+  mix-blend-mode:screen;
+}
+.flux-lines-page-layer .flux-lines-canvas{
+  opacity:1;
+  filter:saturate(1.18) brightness(1.08);
 }
 main,footer{position:relative;z-index:1}
 nav,.progress,.chat,.chat-fab,.modal-backdrop{isolation:isolate}
 @media (prefers-reduced-motion: reduce){
-  .flux-lines-page-layer{opacity:.58}
+  .flux-lines-page-layer{opacity:.62}
 }
 /* NOVAVISION_FLUX_LINES_END */
 
@@ -1530,7 +1535,7 @@ resizeObserver.disconnect();
 /* NOVAVISION_FLUX_LINES_START
    Port directo a JavaScript puro del renderer WebGL oficial de React Bits FluxLines.
    Configuración NovaVision GT:
-   colors: ['#39d7ff', '#188bff', '#0c4fc7']
+   colors: ['#f3f9ff', '#39d7ff', '#188bff']
    glow: 2
    rimWidth: 0.2
    lineWidth: 1
@@ -1719,7 +1724,7 @@ const link = gl => {
   return { program, uniforms };
 };
 
-  const palette = ['#39d7ff', '#188bff', '#0c4fc7'].slice(0, MAX_COLORS);
+  const palette = ['#f3f9ff', '#39d7ff', '#188bff'].slice(0, MAX_COLORS);
   const settings = {
     colors: palette.length ? palette : ['#39d7ff'],
     speed: 0.5,
@@ -1732,7 +1737,7 @@ const link = gl => {
     glow: Math.max(0, 2),
     lineWidth: Math.max(0, 1),
     flow: FLOW.down,
-    opacity: clamp(0.9, 0, 1),
+    opacity: clamp(1, 0, 1),
     mouseInteraction: true,
     mouseStrength: Math.max(0, 1),
     mouseRadius: Math.max(0.01, 0.35),
