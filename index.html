@@ -81,8 +81,8 @@ html,body,body *{-webkit-tap-highlight-color:transparent}html{touch-action:manip
 
 
 /* NOVAVISION_FLUX_LINES_START
-   React Bits FluxLines JS-CSS integrado como animación global de NovaVision GT.
-   Sin enlaces, controles ni contenido de terceros. */
+   FluxLines oficial de React Bits adaptado 1:1 a la página estática NovaVision GT.
+   Sin enlaces ni recursos externos. */
 .flux-lines-container {
   position: relative;
   width: 100%;
@@ -107,17 +107,17 @@ html,body,body *{-webkit-tap-highlight-color:transparent}html{touch-action:manip
   height:100dvh;
   pointer-events:none;
   overflow:hidden;
-  opacity:.82;
+  opacity:1;
   mix-blend-mode:screen;
 }
 .flux-lines-page-layer .flux-lines-canvas{
   opacity:1;
-  filter:saturate(1.18) brightness(1.08);
+  filter:none;
 }
 main,footer{position:relative;z-index:1}
 nav,.progress,.chat,.chat-fab,.modal-backdrop{isolation:isolate}
 @media (prefers-reduced-motion: reduce){
-  .flux-lines-page-layer{opacity:.62}
+  .flux-lines-page-layer{opacity:.72}
 }
 /* NOVAVISION_FLUX_LINES_END */
 
@@ -1533,9 +1533,9 @@ resizeObserver.disconnect();
 
 <script>
 /* NOVAVISION_FLUX_LINES_START
-   Port directo a JavaScript puro del renderer WebGL oficial de React Bits FluxLines.
-   Configuración NovaVision GT:
-   colors: ['#f3f9ff', '#39d7ff', '#188bff']
+   JavaScript exacto de FluxLines portado desde React a ejecución nativa.
+   Configuración solicitada:
+   colors: ['#ffffff', '#ffffff', '#ffffff']
    glow: 2
    rimWidth: 0.2
    lineWidth: 1
@@ -1724,9 +1724,12 @@ const link = gl => {
   return { program, uniforms };
 };
 
-  const palette = ['#f3f9ff', '#39d7ff', '#188bff'].slice(0, MAX_COLORS);
+  const containerRef = { current: document.getElementById('fluxLinesPage') };
+  const canvasRef = { current: document.getElementById('fluxLinesCanvas') };
+  const wakeRef = { current: null };
+
   const settings = {
-    colors: palette.length ? palette : ['#39d7ff'],
+    colors: ['#ffffff', '#ffffff', '#ffffff'].slice(0, MAX_COLORS),
     speed: 0.5,
     scale: Math.max(0.05, 1.6),
     turbulence: 1,
@@ -1750,10 +1753,11 @@ const link = gl => {
     paused: false,
     dpr: undefined
   };
+  const settingsRef = { current: settings };
 
   const cleanupFluxLines = (() => {
-    const container = document.getElementById('fluxLinesPage');
-    const canvas = document.getElementById('fluxLinesCanvas');
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
     const gl = canvas?.getContext('webgl2', {
       alpha: true,
       premultipliedAlpha: true,
@@ -1761,10 +1765,10 @@ const link = gl => {
       depth: false,
       stencil: false
     });
-    if (!container || !canvas || !gl) return;
+    if (!container || !canvas || !gl) return undefined;
 
     const program = link(gl);
-    if (!program) return;
+    if (!program) return undefined;
     const u = program.uniforms;
 
     const buffer = gl.createBuffer();
@@ -1800,13 +1804,13 @@ const link = gl => {
     const magnet = { x: 0, y: 0, active: 0 };
     const swirl = { x: 0, y: 0, age: 10 };
     let time = 0;
-    let reveal = settings.intro && !reduce ? 0 : 1;
+    let reveal = settingsRef.current.intro && !reduce ? 0 : 1;
     let raf = 0;
     let last = 0;
     let visible = true;
 
     const render = () => {
-      const s = settings;
+      const s = settingsRef.current;
       const ratio = canvas.width / Math.max(1, container.clientWidth);
       s.colors.forEach((value, index) => palette.set(parse(value, [1, 1, 1]), index * 3));
       const intro = Math.min(1, reveal);
@@ -1843,7 +1847,7 @@ const link = gl => {
     const frame = now => {
       raf = 0;
       if (!visible || document.hidden) return;
-      const s = settings;
+      const s = settingsRef.current;
       const dt = last ? clamp((now - last) / 1000, 0.0005, 0.05) : 1 / 60;
       last = now;
       const motion = s.paused || reduce ? 0 : 1;
@@ -1873,7 +1877,7 @@ const link = gl => {
     };
 
     const resize = () => {
-      const s = settings;
+      const s = settingsRef.current;
       const width = Math.max(1, container.clientWidth);
       const height = Math.max(1, container.clientHeight);
       const ratio = Math.min(s.dpr || window.devicePixelRatio || 1, 2);
@@ -1905,7 +1909,7 @@ const link = gl => {
 
     const onPointerDown = event => {
       onPointerMove(event);
-      if (!pointer.inside || !settings.clickSwirl || reduce) return;
+      if (!pointer.inside || !settingsRef.current.clickSwirl || reduce) return;
       swirl.x = pointer.x;
       swirl.y = pointer.y;
       swirl.age = 0;
@@ -1943,10 +1947,22 @@ const link = gl => {
     document.addEventListener('visibilitychange', onVisibility);
     resize();
 
-    let lastDpr = settings.dpr;
-return () => {
+    let lastDpr = settingsRef.current.dpr;
+    wakeRef.current = () => {
+      const s = settingsRef.current;
+      if (s.dpr !== lastDpr) {
+        lastDpr = s.dpr;
+        resize();
+        return;
+      }
+      if (!raf) render();
+      wake();
+    };
+
+    return () => {
       cancelAnimationFrame(raf);
-resizeObserver.disconnect();
+      wakeRef.current = null;
+      resizeObserver.disconnect();
       intersection.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerdown', onPointerDown);
@@ -1961,11 +1977,12 @@ resizeObserver.disconnect();
     };
   })();
 
+  wakeRef.current?.();
+
   if (typeof cleanupFluxLines === 'function') {
     window.addEventListener('pagehide', cleanupFluxLines, { once: true });
   }
 })();
-</script>
 <!-- NOVAVISION_FLUX_LINES_END -->
 
 </body>
