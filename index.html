@@ -101,13 +101,13 @@ html,body,body *{-webkit-tap-highlight-color:transparent}html{touch-action:manip
 .flux-lines-page-layer{
   position:fixed;
   inset:0;
-  z-index:6;
+  z-index:0;
   width:100vw;
   height:100vh;
   height:100dvh;
   pointer-events:none;
   overflow:hidden;
-  opacity:1;
+  opacity:.22;
   mix-blend-mode:screen;
 }
 .flux-lines-page-layer .flux-lines-canvas{
@@ -117,7 +117,7 @@ html,body,body *{-webkit-tap-highlight-color:transparent}html{touch-action:manip
 main,footer{position:relative;z-index:1}
 nav,.progress,.chat,.chat-fab,.modal-backdrop{isolation:isolate}
 @media (prefers-reduced-motion: reduce){
-  .flux-lines-page-layer{opacity:.72}
+  .flux-lines-page-layer{opacity:.14}
 }
 /* NOVAVISION_FLUX_LINES_END */
 
@@ -1740,7 +1740,7 @@ const link = gl => {
     glow: Math.max(0, 2),
     lineWidth: Math.max(0, 1),
     flow: FLOW.down,
-    opacity: clamp(1, 0, 1),
+    opacity: clamp(0.32, 0, 1),
     mouseInteraction: true,
     mouseStrength: Math.max(0, 1),
     mouseRadius: Math.max(0.01, 0.35),
